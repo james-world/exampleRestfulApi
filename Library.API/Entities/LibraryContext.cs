@@ -2,7 +2,8 @@
 
 namespace Library.API.Entities
 {
-    public class LibraryContext : DbContext
+    // ReSharper disable once ClassNeverInstantiated.Global (Instantiated by DI)
+    public sealed class LibraryContext : DbContext
     {
         public LibraryContext(DbContextOptions<LibraryContext> options)
             : base(options)
