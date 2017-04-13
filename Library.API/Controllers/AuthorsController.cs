@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using AutoMapper;
 using Library.API.Helpers;
 using Library.API.Models;
 using Library.API.Services;
@@ -21,13 +22,7 @@ namespace Library.API.Controllers
         {
             var authorsFromRepo = libraryRepository.GetAuthors();
 
-            var authors = authorsFromRepo.Select(author => new AuthorDto
-            {
-                Id = author.Id,
-                Name = $"{author.FirstName} {author.LastName}",
-                Genre = author.Genre,
-                Age = author.DateOfBirth.GetCurrentAge()
-            });
+            var authors = Mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo);
 
             return new JsonResult(authors);
         }
