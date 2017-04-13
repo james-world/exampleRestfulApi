@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Library.API.Controllers
 {
+    [Route("api/authors")]
     public class AuthorsController : Controller
     {
         private readonly ILibraryRepository libraryRepository;
@@ -11,7 +12,7 @@ namespace Library.API.Controllers
         {
             this.libraryRepository = libraryRepository;
         }
-
+        
         public IActionResult GetAuthors()
         {
             var authorsFromRepo = libraryRepository.GetAuthors();
