@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using AutoMapper;
 using Library.API.Entities;
 using Library.API.Helpers;
@@ -48,7 +47,7 @@ namespace Library.API.Controllers
         }
 
         [HttpGet("({ids})", Name = "GetAuthorCollection")]
-        public IActionResult GetAuthorCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]IEnumerable<Guid> ids)
+        public IActionResult GetAuthorCollection([ModelBinder(BinderType = typeof(ArrayModelBinder))]ICollection<Guid> ids)
         {
             if (ids == null)
             {
@@ -57,7 +56,7 @@ namespace Library.API.Controllers
 
             var authorEntities = libraryRepository.GetAuthors(ids);
 
-            if (ids.Count() != authorEntities.Count())
+            if (ids.Count != authorEntities.Count())
             {
                 return NotFound();
             }
