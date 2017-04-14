@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AutoMapper;
 using Library.API.Entities;
+using Library.API.Helpers;
 using Library.API.Models;
 using Library.API.Services;
 using Microsoft.AspNetCore.JsonPatch;
@@ -61,6 +62,9 @@ namespace Library.API.Controllers
             {
                 return BadRequest();
             }
+
+            if (!ModelState.IsValid)
+                return new UnprocessableEntityObjectResult(ModelState);
 
             if (!libraryRepository.AuthorExists(authorId))
             {
