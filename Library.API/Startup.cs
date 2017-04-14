@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Newtonsoft.Json.Serialization;
+using Serilog;
 
 namespace Library.API
 {
@@ -25,6 +26,12 @@ namespace Library.API
 
         public Startup(IHostingEnvironment env)
         {
+            Log.Logger = new LoggerConfiguration()
+                .MinimumLevel.Debug()
+                .Enrich.FromLogContext()
+                .WriteTo.Seq("http://localhost:5341")
+                .CreateLogger();
+
             var builder = new ConfigurationBuilder()
                 .SetBasePath(env.ContentRootPath)
                 .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
@@ -60,6 +67,7 @@ namespace Library.API
         {
             loggerFactory.AddConsole();
             loggerFactory.AddDebug(LogLevel.Information);
+            loggerFactory.AddSerilog();
 
             if (env.IsDevelopment())
             {
