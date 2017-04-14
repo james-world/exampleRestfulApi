@@ -15,7 +15,7 @@ namespace Library.API.Models
         public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
         {
             if (Title == Description)
-                yield return new ValidationResult("Title and description must differ.", new [] {"Book"});
+                yield return new ValidationResult("Title and description must differ.", new [] {GetType().Name});
         }
     }
 }
