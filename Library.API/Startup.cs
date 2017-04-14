@@ -58,6 +58,7 @@ namespace Library.API
             LibraryContext libraryContext)
         {
             loggerFactory.AddConsole();
+            loggerFactory.AddDebug(LogLevel.Information);
 
             if (env.IsDevelopment())
             {
