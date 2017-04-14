@@ -161,7 +161,20 @@ namespace Library.API.Controllers
 
             var bookForAuthorFromRepo = libraryRepository.GetBookForAuthor(authorId, bookId);
             if (bookForAuthorFromRepo == null)
-                return NotFound();
+            {
+                var bookDto = new BookForUpdateDto();
+                patchDoc.ApplyTo(bookDto);
+
+                var bookToAdd = Mapper.Map<Book>(bookDto);
+                bookToAdd.Id = bookId;
+                
+                libraryRepository.AddBookForAuthor(authorId, bookToAdd);
+                if(!libraryRepository.Save())
+                    throw new Exception($"Upserting book {bookId} for author {authorId} failed on save.");
+
+                var bookToReturn = Mapper.Map<BookDto>(bookToAdd);
+                return CreatedAtRoute("GetBookForAuthor", new {authorId, bookId}, bookToReturn);
+            }
 
             var bookToPatch = Mapper.Map<BookForUpdateDto>(bookForAuthorFromRepo);
 
