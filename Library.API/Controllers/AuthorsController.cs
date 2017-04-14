@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using AutoMapper;
 using Library.API.Entities;
-using Library.API.Helpers;
 using Library.API.Models;
 using Library.API.Services;
 using Microsoft.AspNetCore.Http;
@@ -58,7 +56,7 @@ namespace Library.API.Controllers
             if (!libraryRepository.Save())
             {
                 throw new Exception("Creating an author failed on save.");
-            };
+            }
 
             var authorToReturn = Mapper.Map<AuthorDto>(authorEntity);
 
