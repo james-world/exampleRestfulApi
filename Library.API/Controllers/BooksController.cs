@@ -148,6 +148,8 @@ namespace Library.API.Controllers
                 var bookDto = new BookForUpdateDto();
                 patchDoc.ApplyTo(bookDto, ModelState);
 
+                TryValidateModel(bookDto);
+
                 if (!ModelState.IsValid)
                     return new UnprocessableEntityObjectResult(ModelState);
 
@@ -165,6 +167,8 @@ namespace Library.API.Controllers
             var bookToPatch = Mapper.Map<BookForUpdateDto>(bookForAuthorFromRepo);
 
             patchDoc.ApplyTo(bookToPatch, ModelState);
+
+            TryValidateModel(bookToPatch);
 
             if (!ModelState.IsValid)
                 return new UnprocessableEntityObjectResult(ModelState);
