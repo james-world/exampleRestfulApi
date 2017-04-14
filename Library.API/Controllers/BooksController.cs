@@ -103,6 +103,9 @@ namespace Library.API.Controllers
             if (!libraryRepository.AuthorExists(authorId))
                 return NotFound();
 
+            if (!ModelState.IsValid)
+                return new UnprocessableEntityObjectResult(ModelState);
+
             var bookForAuthorFromRepo = libraryRepository.GetBookForAuthor(authorId, bookId);
             if (bookForAuthorFromRepo == null)
             {
