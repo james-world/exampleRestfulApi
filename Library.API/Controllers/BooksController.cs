@@ -23,9 +23,7 @@ namespace Library.API.Controllers
         public IActionResult GetBooksForAuthor(Guid authorId)
         {
             if (!libraryRepository.AuthorExists(authorId))
-            {
                 return NotFound();
-            }
 
             var booksForAuthorFromRepo = libraryRepository.GetBooksForAuthor(authorId);
 
@@ -37,17 +35,13 @@ namespace Library.API.Controllers
         [HttpGet("{bookId}", Name = "GetBookForAuthor")]
         public IActionResult GetBookForAuthor(Guid authorId, Guid bookId)
         {
-            if(!libraryRepository.AuthorExists(authorId))
-            {
+            if (!libraryRepository.AuthorExists(authorId))
                 return NotFound();
-            }
 
             var bookForAuthorFromRepo = libraryRepository.GetBookForAuthor(authorId, bookId);
 
             if (bookForAuthorFromRepo == null)
-            {
                 return NotFound();
-            }
 
             var bookForAuthor = Mapper.Map<BookDto>(bookForAuthorFromRepo);
 
@@ -59,26 +53,20 @@ namespace Library.API.Controllers
             [FromBody]BookForCreationDto book)
         {
             if (book == null)
-            {
                 return BadRequest();
-            }
 
             if (!ModelState.IsValid)
                 return new UnprocessableEntityObjectResult(ModelState);
 
             if (!libraryRepository.AuthorExists(authorId))
-            {
                 return NotFound();
-            }
 
             var bookEntity = Mapper.Map<Book>(book);
 
             libraryRepository.AddBookForAuthor(authorId, bookEntity);
 
             if (!libraryRepository.Save())
-            {
                 throw new Exception($"Creating a book for author {authorId} failed on save.");
-            }
 
             var bookToReturn = Mapper.Map<BookDto>(bookEntity);
 
@@ -95,16 +83,12 @@ namespace Library.API.Controllers
 
             var bookForAuthorFromRepo = libraryRepository.GetBookForAuthor(authorId, bookId);
             if (bookForAuthorFromRepo == null)
-            {
                 return NotFound();
-            }
 
             libraryRepository.DeleteBook(bookForAuthorFromRepo);
 
             if (!libraryRepository.Save())
-            {
                 throw new Exception($"Deleting book {bookId} for author {authorId} failed on save.");
-            }
 
             return NoContent();
         }
@@ -114,14 +98,10 @@ namespace Library.API.Controllers
             [FromBody]BookForUpdateDto book)
         {
             if (book == null)
-            {
                 return BadRequest();
-            }
 
             if (!libraryRepository.AuthorExists(authorId))
-            {
                 return NotFound();
-            }
 
             var bookForAuthorFromRepo = libraryRepository.GetBookForAuthor(authorId, bookId);
             if (bookForAuthorFromRepo == null)
@@ -132,9 +112,7 @@ namespace Library.API.Controllers
                 libraryRepository.AddBookForAuthor(authorId, bookToAdd);
 
                 if (!libraryRepository.Save())
-                {
                     throw new Exception($"Upserting book {bookId} for author {authorId} failed on save.");
-                }
 
                 var bookToReturn = Mapper.Map<BookDto>(bookToAdd);
 
@@ -146,9 +124,7 @@ namespace Library.API.Controllers
             libraryRepository.UpdateBookForAuthor(bookForAuthorFromRepo);
 
             if (!libraryRepository.Save())
-            {
                 throw new Exception($"Updating book {bookId} for author {authorId} failed on save.");
-            }
 
             return NoContent();
         }
