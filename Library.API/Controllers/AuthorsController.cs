@@ -73,5 +73,25 @@ namespace Library.API.Controllers
                 ? new StatusCodeResult(StatusCodes.Status409Conflict)
                 : NotFound();
         }
+
+        [HttpDelete("{id}")]
+        public IActionResult DeleteAuthor(Guid id)
+        {
+            var authorFromRepo = libraryRepository.GetAuthor(id);
+
+            if (authorFromRepo == null)
+            {
+                return NotFound();
+            }
+
+            libraryRepository.DeleteAuthor(authorFromRepo);
+
+            if (!libraryRepository.Save())
+            {
+                throw new Exception($"Deleting author {id} failed on save.");
+            }
+
+            return NoContent();
+        }
     }
 }
