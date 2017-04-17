@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using AutoMapper;
 using Library.API.Entities;
+using Library.API.Helpers;
 using Library.API.Models;
 using Library.API.Services;
 using Microsoft.AspNetCore.Http;
@@ -19,9 +20,9 @@ namespace Library.API.Controllers
             this.libraryRepository = libraryRepository;
         }
         
-        public IActionResult GetAuthors()
+        public IActionResult GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
-            var authorsFromRepo = libraryRepository.GetAuthors();
+            var authorsFromRepo = libraryRepository.GetAuthors(authorsResourceParameters);
 
             var authors = Mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo);
             return Ok(authors);
