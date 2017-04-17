@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using Library.API.Entities;
 using Library.API.Helpers;
+using Microsoft.AspNetCore.Mvc.ViewFeatures.Internal;
 
 namespace Library.API.Services
 {
     public interface ILibraryRepository
     {
-        IEnumerable<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters);
+        PagedList<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters);
         Author GetAuthor(Guid authorId);
         IEnumerable<Author> GetAuthors(IEnumerable<Guid> authorIds);
         void AddAuthor(Author author);
