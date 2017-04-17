@@ -67,9 +67,15 @@ namespace Library.API.Services
 
         public PagedList<Author> GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
-            var authors = _context.Authors
+            IQueryable<Author> authors = _context.Authors
                 .OrderBy(a => a.FirstName)
                 .ThenBy(a => a.LastName);
+
+            if (!string.IsNullOrEmpty(authorsResourceParameters.Genre))
+            {
+                var genreForWhereClause = authorsResourceParameters.Genre.Trim().ToLowerInvariant();
+                authors = authors.Where(a => a.Genre.ToLowerInvariant() == genreForWhereClause);
+            }
 
             return PagedList<Author>.Create(authors,
                 authorsResourceParameters.PageNumber,
