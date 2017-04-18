@@ -16,9 +16,11 @@ namespace Library.API.Controllers
     {
         private readonly ILibraryRepository libraryRepository;
         private readonly IUrlHelper urlHelper;
+        private IPropertyMappingService propertyMappingService;
 
-        public AuthorsController(ILibraryRepository libraryRepository, IUrlHelper urlHelper)
+        public AuthorsController(ILibraryRepository libraryRepository, IUrlHelper urlHelper, IPropertyMappingService propertyMappingService)
         {
+            this.propertyMappingService = propertyMappingService;
             this.urlHelper = urlHelper;
             this.libraryRepository = libraryRepository;
         }
@@ -26,6 +28,9 @@ namespace Library.API.Controllers
         [HttpGet(Name = "GetAuthors")]
         public IActionResult GetAuthors(AuthorsResourceParameters authorsResourceParameters)
         {
+            if (!propertyMappingService.ValidMappingExistsFor<AuthorDto, Author>(authorsResourceParameters.OrderBy))
+                return BadRequest();
+
             var authorsFromRepo = libraryRepository.GetAuthors(authorsResourceParameters);
 
             var previousPageLink = authorsFromRepo.HasPrevious
