@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using AutoMapper;
 using Library.API.Entities;
 using Library.API.Helpers;
@@ -16,10 +17,13 @@ namespace Library.API.Controllers
     {
         private readonly ILibraryRepository libraryRepository;
         private readonly ILogger<BooksController> logger;
+        private readonly IUrlHelper urlHelper;
 
         public BooksController(ILibraryRepository libraryRepository,
-            ILogger<BooksController> logger)
+            ILogger<BooksController> logger,
+            IUrlHelper urlHelper)
         {
+            this.urlHelper = urlHelper;
             this.logger = logger;
             this.libraryRepository = libraryRepository;
         }
@@ -33,6 +37,7 @@ namespace Library.API.Controllers
 
             var booksForAuthor = Mapper.Map<IEnumerable<BookDto>>(booksForAuthorFromRepo);
 
+            booksForAuthor = booksForAuthor.Select(CreateLinksForBook);
             return Ok(booksForAuthor);
         }
 
@@ -49,7 +54,7 @@ namespace Library.API.Controllers
 
             var bookForAuthor = Mapper.Map<BookDto>(bookForAuthorFromRepo);
 
-            return Ok(bookForAuthor);
+            return Ok(CreateLinksForBook(bookForAuthor));
         }
 
         [HttpPost]
@@ -74,10 +79,11 @@ namespace Library.API.Controllers
 
             var bookToReturn = Mapper.Map<BookDto>(bookEntity);
 
-            return CreatedAtRoute("GetBookForAuthor", new { authorId, bookId = bookToReturn.Id}, bookToReturn);
+            return CreatedAtRoute("GetBookForAuthor", new { authorId, bookId = bookToReturn.Id},
+                CreateLinksForBook(bookToReturn));
         }
 
-        [HttpDelete("{bookId}")]
+        [HttpDelete("{bookId}", Name = "DeleteBookForAuthor")]
         public IActionResult DeleteBookForAuthor(Guid authorId, Guid bookId)
         {
             if (!libraryRepository.AuthorExists(authorId))
@@ -99,7 +105,7 @@ namespace Library.API.Controllers
             return NoContent();
         }
 
-        [HttpPut("{bookId}")]
+        [HttpPut("{bookId}", Name = "UpdateBookForAuthor")]
         public IActionResult UpdateBookForAuthor(Guid authorId, Guid bookId,
             [FromBody]BookForUpdateDto book)
         {
@@ -138,7 +144,7 @@ namespace Library.API.Controllers
             return NoContent();
         }
 
-        [HttpPatch("{bookId}")]
+        [HttpPatch("{bookId}", Name = "PartiallyUpdateBookForAuthor")]
         public IActionResult PartiallyUpdateBookForAuthor(Guid authorId, Guid bookId,
             [FromBody]JsonPatchDocument<BookForUpdateDto> patchDoc)
         {
@@ -189,6 +195,15 @@ namespace Library.API.Controllers
                 throw new Exception($"Patching book {bookId} for author {authorId} failed on save.");
 
             return NoContent();
+        }
+
+        private BookDto CreateLinksForBook(BookDto book)
+        {
+            book.Links.Add(new LinkDto(urlHelper.Link("GetBookForAuthor", new { bookId = book.Id }), "self", "GET"));
+            book.Links.Add(new LinkDto(urlHelper.Link("DeleteBookForAuthor", new { bookId = book.Id }), "delete_book", "DELETE"));
+            book.Links.Add(new LinkDto(urlHelper.Link("UpdateBookForAuthor", new { bookId = book.Id }), "update_book", "PUT"));
+            book.Links.Add(new LinkDto(urlHelper.Link("PartiallyUpdateBookForAuthor", new { bookId = book.Id }), "partially_update_book", "PATCH"));
+            return book;
         }
     }
 }
